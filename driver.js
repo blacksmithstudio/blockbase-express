@@ -2,6 +2,7 @@ const express = require('express')
 const bodyparser = require('body-parser')
 const multer = require('multer')
 const upload = multer({ dest : 'uploads/' })
+//@TODO make multer config possible in {env}.yml
 
 /**
  * Blockbase Express driver (app.drivers.express)
@@ -20,7 +21,8 @@ module.exports = (app) => {
     const config = app.config.get('express')
 
     // server add ons
-    server.use('/assets', express.static(`${app.root}/views/assets`))
+    server.use(config.assets ? config.assets : '/assets', express.static(`${app.root}/views/assets`))
+
     server.use(bodyparser.json({ limit: config.body_parser_limit }))
     server.use(bodyparser.urlencoded({
         parameterLimit: 10000,
