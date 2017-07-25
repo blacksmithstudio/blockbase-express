@@ -16,7 +16,7 @@ module.exports = (app) => {
     const server = express()
 
     if(!app.config.has('express'))
-        return app.drivers.logger.error('Express', 'Cannot init the driver, missing config')
+        return app.drivers.logger.error('Drivers', 'Cannot init express, no valid config')
 
     const config = app.config.get('express')
 
