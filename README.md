@@ -2,7 +2,7 @@
 Compatible with Blockbase Framework
 
 ### Version
-0.0.1 alpha
+0.0.2 alpha
 
 ### How to install ?
 ```shell
@@ -80,7 +80,7 @@ express :
 The [https://www.npmjs.com/package/body-parser](body parser) is a critical sub-library really useful when creating APIs, it handles the JSON support of the route and will create a security layer on the size of your requests.
 
 You can set up the bodyparser limit with the `body_parser_limit` parameter.
-To see what to put inside this key please refer to the [https://www.npmjs.com/package/body-parser#limit](lib doc section). 
+To see what to put inside this key please refer to the [https://www.npmjs.com/package/body-parser#limit](lib doc section).
 
 ```yml
 express :
