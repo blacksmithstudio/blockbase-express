@@ -16,7 +16,7 @@ module.exports = (app) => {
     const server = express()
 
     if(!app.config.has('express'))
-        return app.drivers.logger.error('Drivers', 'Cannot init express, no valid config')
+        return app.drivers.logger.error('Express', 'Cannot init the driver, missing config')
 
     const config = app.config.get('express')
 
@@ -36,10 +36,13 @@ module.exports = (app) => {
             server[route.method](route.src, (req, res) => { res.sendFile(`${app.root}/views/${route.dest}.html`)})
 
         if(route.type === 'controller'){
+            let path = route.dest.split('::')[0],
+                method = route.dest.split('::')[1]
+
             if(route.method === 'post' || route.method === 'put')
-                server[route.method](route.src, upload.single('import'), require(app.root + route.dest.split('::')[0])(app)[route.dest.split('::')[1]])
+                server[route.method](route.src, upload.single('import'), require(`${app.root}/controllers/${path.replace('.', '/')}`)(app)[method])
             else
-                server[route.method](route.src, require(app.root + route.dest.split('::')[0])(app)[route.dest.split('::')[1]])
+                server[route.method](route.src, require(`${app.root}/controllers/${path.replace('.', '/')}`)(app)[method])
         }
     }
 
