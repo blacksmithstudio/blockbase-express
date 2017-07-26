@@ -15,47 +15,76 @@ const upload = multer({ dest : 'uploads/' })
 module.exports = (app) => {
     const server = express()
 
+    function route(){
+        use()
+
+        for(let route of app.config.get('express').routes){
+            if(route.type === 'view')
+                server[route.method](route.src, (req, res) => { res.sendFile(`${app.root}/views/${route.dest}.html`)})
+
+            if(route.type === 'controller'){
+                let path = route.dest.split('::')[0],
+                    method = route.dest.split('::')[1]
+
+                let controller = function (){
+                    if(!app.controllers)
+                        return require(`${app.root}/controllers/${path.replace('.', '/')}`)(app)
+
+                    if(!!path.split('.').length)
+                        return app.controllers[path.split('.')[0]][path.split('.')[1]]
+                    else
+                        return app.controllers[path]
+                }()
+
+                if(route.method === 'post' || route.method === 'put')
+                    server[route.method](route.src, upload.single('import'), controller[method])
+                else
+                    server[route.method](route.src, controller[method])
+            }
+        }
+
+        use(true)
+    }
+
+    function listen(){
+        server.listen(config.port, ()=>{
+            app.drivers.logger.success('Express', `App listening on port ${config.port}`)
+        })
+    }
+
+    function use(state = false){
+        // state is true if routes has been declared (use before)
+        if(!state){
+            server.use(config.assets ? config.assets : '/assets', express.static(`${app.root}/views/assets`))
+
+            server.use(bodyparser.json({ limit: config.body_parser_limit }))
+            server.use(bodyparser.urlencoded({
+                parameterLimit: 10000,
+                limit : config.body_parser_limit,
+                extended: true
+            }))
+        }
+
+        if(state){
+            // handling 404 errors from config.express['404_redirect'] property
+            server.use(function(req, res, next){
+                res.status(404)
+                res.writeHead(302, {'Location': config['404_redirect'] || '/'})
+                res.end()
+            })
+        }
+    }
+
     if(!app.config.has('express'))
         return app.drivers.logger.error('Express', 'Cannot init the driver, missing config')
 
     const config = app.config.get('express')
 
-    // server add ons
-    server.use(config.assets ? config.assets : '/assets', express.static(`${app.root}/views/assets`))
-
-    server.use(bodyparser.json({ limit: config.body_parser_limit }))
-    server.use(bodyparser.urlencoded({
-        parameterLimit: 10000,
-        limit : config.body_parser_limit,
-        extended: true
-    }))
-
-    // routing from express.routes in config/{env}.yml
-    for(let route of app.config.get('express').routes){
-        if(route.type === 'view')
-            server[route.method](route.src, (req, res) => { res.sendFile(`${app.root}/views/${route.dest}.html`)})
-
-        if(route.type === 'controller'){
-            let path = route.dest.split('::')[0],
-                method = route.dest.split('::')[1]
-
-            if(route.method === 'post' || route.method === 'put')
-                server[route.method](route.src, upload.single('import'), require(`${app.root}/controllers/${path.replace('.', '/')}`)(app)[method])
-            else
-                server[route.method](route.src, require(`${app.root}/controllers/${path.replace('.', '/')}`)(app)[method])
-        }
+    // routing from express.routes in config/{env}.yml and listen
+    if(!config.async_init){
+        route()
+        listen()
     }
 
-    // handling 404 errors from config.express['404_redirect'] property
-    server.use(function(req, res, next){
-        res.status(404)
-        res.writeHead(302, {'Location': config['404_redirect'] || '/'})
-        res.end()
-    })
-
-    server.listen(config.port, ()=>{
-        app.drivers.logger.success('Express', `App listening on port ${config.port}`)
-    })
-
-    return { express, server }
+    return { express, server, route, listen }
 }
