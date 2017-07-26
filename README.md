@@ -107,6 +107,29 @@ express :
 
 The example above will redirect all 404 responses to /notfound handled by the four0four html template.
 
+#### Async Init
+Due to Blockbase architecture, drivers & models are created before controllers. However if you use controllers related routes, you might need to force Express to wait until the controllers are ready to listen & use addons.
+
+In order to do that, two steps :
+
+Add the boolean `async_init` to the config/{env}.yml in the express section :
+```yml
+express :
+    async_init : true
+    #...
+    routes :
+        #...
+        #...
+```
+
+Then manually trigger `app.drivers.express.route` and `app.drivers.express.listen` after the app init in the main blockbase callback.
+```js
+blockbase({ root : __dirname }, (app) => {
+    app.drivers.express.route()
+    app.drivers.express.listen()
+})
+```
+
 License
 ----
 
