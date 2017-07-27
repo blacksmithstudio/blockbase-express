@@ -30,7 +30,7 @@ module.exports = (app) => {
                     if(!app.controllers)
                         return require(`${app.root}/controllers/${path.replace('.', '/')}`)(app)
 
-                    if(!!path.split('.').length)
+                    if(path.split('.').length > 1)
                         return app.controllers[path.split('.')[0]][path.split('.')[1]]
                     else
                         return app.controllers[path]
