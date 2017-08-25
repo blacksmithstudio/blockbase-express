@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyparser = require('body-parser')
+const Twig = require('twig')
 const multer = require('multer')
 const upload = multer({ dest : 'uploads/' })
 //@TODO make multer config possible in {env}.yml
@@ -20,7 +21,7 @@ module.exports = (app) => {
 
         for(let route of app.config.get('express').routes){
             if(route.type === 'view')
-                server[route.method](route.src, (req, res) => { res.sendFile(`${app.root}/views/${route.dest}.html`)})
+                server[route.method](route.src, (req, res) => { res.render(`${app.root}/views/${route.dest}.twig`, {}) })
 
             if(route.type === 'controller'){
                 let path = route.dest.split('::')[0],

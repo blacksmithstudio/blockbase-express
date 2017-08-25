@@ -2,7 +2,7 @@
 Compatible with Blockbase Framework
 
 ### Version
-0.0.5 alpha
+0.0.6 alpha
 
 ### How to install ?
 ```shell
@@ -56,7 +56,7 @@ ex : creates a route on `localhost:1340/foo/bar` that will trigger the `app.cont
 ```
 
 * view
-ex : creates a route on `localhost:1340/` that will show the `/views/home.html` template on the GET method
+ex : creates a route on `localhost:1340/` that will show the `/views/home.twig` template on the GET method
 ```yml
       - type: view
         src: /
