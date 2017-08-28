@@ -2,7 +2,7 @@
 Compatible with Blockbase Framework
 
 ### Version
-0.0.6 alpha
+0.0.7 alpha
 
 ### How to install ?
 ```shell
@@ -129,6 +129,18 @@ blockbase({ root : __dirname }, (app) => {
     app.drivers.express.listen()
 })
 ```
+
+#### Sessions
+blockbase-express driver includes a native support of the [https://www.npmjs.com/package/express-session](express-session) driver.
+
+To activate it, you just have to fill the following infos :
+```yml
+express :
+    session : true
+    session_secret : hereYourSecretKey
+```
+
+The `session_secret` key is mandatory in order to secure your sessions. Try to use a cool rock-solid hash :)
 
 License
 ----

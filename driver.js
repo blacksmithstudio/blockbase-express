@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyparser = require('body-parser')
+const session = require('express-session')
 const Twig = require('twig')
 const multer = require('multer')
 const upload = multer({ dest : 'uploads/' })
@@ -64,6 +65,15 @@ module.exports = (app) => {
                 limit : config.body_parser_limit,
                 extended: true
             }))
+
+            if(config.session){
+                app.use(session({
+                  secret: config.session_secret,
+                  resave: false,
+                  saveUninitialized: true,
+                  cookie: { secure: true }
+                }))
+            }
         }
 
         if(state){
