@@ -67,7 +67,7 @@ module.exports = (app) => {
             }))
 
             if(config.session){
-                app.use(session({
+                server.use(session({
                   secret: config.session_secret,
                   resave: false,
                   saveUninitialized: true,
