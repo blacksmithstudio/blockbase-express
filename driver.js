@@ -74,6 +74,9 @@ module.exports = (app) => {
                   cookie: { secure: true }
                 }))
             }
+
+            server.set('views', `${app.root}/views`)
+            server.set('view engine', 'twig')
         }
 
         if(state){
