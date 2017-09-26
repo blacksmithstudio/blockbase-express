@@ -78,8 +78,7 @@ module.exports = (app) => {
                       ttl :  260
                   }),
                   resave: false,
-                  saveUninitialized: true,
-                  cookie: { secure: true }
+                  saveUninitialized: true
                 }))
             }
 

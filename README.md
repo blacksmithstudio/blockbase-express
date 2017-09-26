@@ -2,7 +2,7 @@
 Compatible with Blockbase Framework
 
 ### Version
-0.0.9 alpha
+0.1.1 alpha
 
 ### How to install ?
 ```shell
@@ -143,6 +143,8 @@ express :
 ```
 
 The `session_secret` key is mandatory in order to secure your sessions. Try to use a cool rock-solid hash :)
+
+Be also careful `redis` is mandatory when you use session...
 
 License
 ----
