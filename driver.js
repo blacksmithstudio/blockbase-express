@@ -1,6 +1,8 @@
 const express = require('express')
 const bodyparser = require('body-parser')
+const redis = require('redis')
 const session = require('express-session')
+const redisStore = require('connect-redis')(session)
 const Twig = require('twig')
 const multer = require('multer')
 const upload = multer({ dest : 'uploads/' })
@@ -69,6 +71,12 @@ module.exports = (app) => {
             if(config.session){
                 server.use(session({
                   secret: config.session_secret,
+                  store: new redisStore({
+                      host: config.session_redis_host || 'localhost',
+                      port: config.session_redis_port || 6379,
+                      client: redis.createClient(),
+                      ttl :  260
+                  }),
                   resave: false,
                   saveUninitialized: true,
                   cookie: { secure: true }

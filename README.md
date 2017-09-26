@@ -138,6 +138,8 @@ To activate it, you just have to fill the following infos :
 express :
     session : true
     session_secret : hereYourSecretKey
+    session_redis_host : host to your redis server (default localhost)
+    session_redis_port : port to your redis (default 6379)
 ```
 
 The `session_secret` key is mandatory in order to secure your sessions. Try to use a cool rock-solid hash :)
