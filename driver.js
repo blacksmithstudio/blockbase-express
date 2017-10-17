@@ -5,7 +5,7 @@ const session = require('express-session')
 const redisStore = require('connect-redis')(session)
 const Twig = require('twig')
 const multer = require('multer')
-const upload = multer({ dest : 'uploads/' })
+const upload = multer({ limits: { fileSize:50*1024*1024 } })
 //@TODO make multer config possible in {env}.yml
 
 /**
@@ -41,7 +41,7 @@ module.exports = (app) => {
                 }()
 
                 if(route.method === 'post' || route.method === 'put')
-                    server[route.method](route.src, upload.single('import'), controller[method])
+                    server[route.method](route.src, upload.any(), controller[method])
                 else
                     server[route.method](route.src, controller[method])
             }
