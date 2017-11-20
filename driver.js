@@ -74,8 +74,7 @@ module.exports = (app) => {
                   store: new redisStore({
                       host: config.session_redis_host || 'localhost',
                       port: config.session_redis_port || 6379,
-                      client: redis.createClient(),
-                      ttl :  260
+                      client: redis.createClient()
                   }),
                   resave: false,
                   saveUninitialized: true
