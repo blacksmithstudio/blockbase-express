@@ -73,8 +73,8 @@ module.exports = (app) => {
                     app.drivers.express.server.use(m.src, middleware)
                 else
                     app.drivers.express.server.use(middleware)
-                }
             }
+            if(middlewares.length)
             app.drivers.logger.success('Middleware', 'initialized')
         }
     }
