@@ -69,11 +69,10 @@ module.exports = (app) => {
                 let middleware = require(path.join(basePath, m.dest))(app)
                 app.middlewares[m.dest.toLowerCase()] = middleware
 
-                if (m.type == 'handler') {
-                    if (m.src)
-                        app.drivers.express.server.use(m.src, middleware)
-                    else
-                        app.drivers.express.server.use(middleware)
+                if (m.src)
+                    app.drivers.express.server.use(m.src, middleware)
+                else
+                    app.drivers.express.server.use(middleware)
                 }
             }
             app.drivers.logger.success('Middleware', 'initialized')
