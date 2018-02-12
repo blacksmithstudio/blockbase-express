@@ -20,6 +20,9 @@ const upload = multer({limits: {fileSize: 50 * 1024 * 1024}})
 module.exports = (app) => {
     const server = express()
 
+    /**
+     * Initialize the routes
+     */
     function route() {
         use()
 
@@ -53,29 +56,36 @@ module.exports = (app) => {
         use(true)
     }
 
-    function listen() {
-        server.listen(config.port, () => {
+    /**
+     * start the server
+     * @param {number|string=}port
+     */
+    function listen(port) {
+        server.listen(port || config.port, () => {
             app.drivers.logger.success('Express', `App listening on port ${config.port}`)
         })
     }
 
+    /**
+     * Initialize middlewares
+     */
     function middlewares() {
 
         app.middlewares = {}
         const basePath = path.join(app.root, '/middlewares')
-        let middlewares = app.config.express.middlewares
+        let middlewares = app.config.get('express').middlewares
         if (middlewares && Array.isArray(middlewares) && middlewares.length) {
             for (let m of middlewares) {
                 let middleware = require(path.join(basePath, m.dest))(app)
                 app.middlewares[m.dest.toLowerCase()] = middleware
 
                 if (m.src)
-                    app.drivers.express.server.use(m.src, middleware)
+                    server.use(m.src, middleware)
                 else
-                    app.drivers.express.server.use(middleware)
+                    server.use(middleware)
             }
-            if(middlewares.length)
-            app.drivers.logger.success('Middleware', 'initialized')
+            if (middlewares.length)
+                app.drivers.logger.success('Middleware', 'initialized')
         }
     }
 

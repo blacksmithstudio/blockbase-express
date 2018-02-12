@@ -2,7 +2,7 @@
 Compatible with Blockbase Framework
 
 ### Version
-0.1.3 alpha
+0.1.7 alpha
 
 ### How to install ?
 ```shell
@@ -63,6 +63,18 @@ ex : creates a route on `localhost:1340/` that will show the `/views/home.twig` 
         dest: home
         method: get
 ```
+
+#### Middlewares
+
+A middleware needs to have a destination `dest`, and can optionaly have a source `src` to define the path where to use it.
+Example : 
+```yaml
+    - dest: uri-logger
+    - dest: cors
+      src: /login
+    #...
+```
+
 
 #### Static Assets
 Static assets can be stored in `/views/assets/*`
