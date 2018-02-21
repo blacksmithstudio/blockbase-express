@@ -1,6 +1,6 @@
 {
   "name": "@blacksmithstudio/blockbase-express",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "blockbase driver for Express",
   "main": "driver.js",
   "scripts": {
