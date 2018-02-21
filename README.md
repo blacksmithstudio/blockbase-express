@@ -75,6 +75,17 @@ Example :
     #...
 ```
 
+Then, inside the /middleware folder, create a middleware using the following sample :
+```js
+//cors.js - /login
+module.exports = (app) => {
+    return function(req, res, next) {
+        app.drivers.logger.log(`hello it's Middleware again on /login !`)
+        next() //Continue to next middleware/route call
+    }
+}
+
+```
 
 #### Static Assets
 Static assets can be stored in `/views/assets/*`
