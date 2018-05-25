@@ -1,6 +1,6 @@
 {
   "name": "@blacksmithstudio/blockbase-express",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "blockbase driver for Express",
   "main": "driver.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org:blacksmithstudio/driver-express.git"
+    "url": "git+ssh://git@github.com:blacksmithstudio/blockbase-express.git"
   },
   "author": "Alexandre Pereira <alex@blacksmith.studio>",
   "license": "MIT",
