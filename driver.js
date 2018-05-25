@@ -7,6 +7,7 @@ const Twig = require('twig')
 const multer = require('multer')
 const path = require('path')
 const upload = multer({limits: {fileSize: 50 * 1024 * 1024}})
+const opn = require('opn')
 //@TODO make multer config possible in {env}.yml
 
 /**
@@ -63,6 +64,7 @@ module.exports = (app) => {
     function listen(port) {
         server.listen(port || config.port, () => {
             app.drivers.logger.success('Express', `App listening on port ${config.port}`)
+            opn(`http://localhost:${config.port}`)
         })
     }
 
@@ -89,6 +91,10 @@ module.exports = (app) => {
         }
     }
 
+    /**
+     * trigger methods before and after the routing (use methods almost)
+     * @param {Boolean} state - routing done (true) or not 
+     */
     function use(state = false) {
         // state is true if routes has been declared (use before)
         if (!state) {
