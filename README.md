@@ -13,6 +13,7 @@ Then add to your `config/{env}.yml` the following (example) instructions dependi
 ```yml
 express :
     port: 1340
+    open: true
     body_parser_limit : 50mb
     404_redirect : /404
     routes :
@@ -27,7 +28,7 @@ express :
 ```
 
 ### Usage
-The entire usage of the driver is done by the `config/{env}.yml`, we've made tried to make it as simple as it need.
+The entire usage of the driver is done by the `config/{env}.yml`, we've tried to make it as simple as it need.
 
 #### Ports
 The port is simply handled by the `config/{env}.yml` file in the port section of express.
@@ -39,6 +40,17 @@ express :
 ```
 
 The example above creates a server on `http://localhost:1340`
+
+#### Open app in browser
+The default config opens your default browser right after the app starts.
+
+To prevent this, simply put "false" in the "open" parameter
+```yml
+express: 
+    open: false
+```
+
+
 
 #### Routing
 A route can have two type : `controller` or `view`.
@@ -168,6 +180,10 @@ express :
 The `session_secret` key is mandatory in order to secure your sessions. Try to use a cool rock-solid hash :)
 
 Be also careful `redis` is mandatory when you use session...
+
+Issues
+-
+If you find any issue, feel free to post it in the [repo on Github](https://github.com/blacksmithstudio/blockbase-express/issues)
 
 License
 ----
