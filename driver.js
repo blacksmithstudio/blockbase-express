@@ -19,13 +19,20 @@ const opn = require('opn')
  * @returns {Object} driver object containing public methods
  */
 module.exports = (app) => {
+
+    if (!app.config.has('express'))
+        return app.drivers.logger.error('Express', 'Cannot init the driver, missing config')
+
     const server = express()
+    const config = app.config.get('express')
 
     /**
      * Initialize the routes
      */
     function route() {
-        use()
+        configure()
+
+        middlewares()
 
         for (let route of app.config.get('express').routes) {
             if (route.type === 'view')
@@ -34,7 +41,7 @@ module.exports = (app) => {
                 })
 
             if (route.type === 'controller') {
-                let path = route.dest.split('::')[0],
+                let path   = route.dest.split('::')[0],
                     method = route.dest.split('::')[1]
 
                 let controller = function () {
@@ -54,25 +61,35 @@ module.exports = (app) => {
             }
         }
 
-        use(true)
+        afterRouting()
+    }
+
+    function afterRouting() {
+        //TODO : handle async error
+        // handling 404 errors from config.express['404_redirect'] property
+        server.use(function (req, res, next) {
+            res.status(404)
+            res.writeHead(302, {'Location': config['404_redirect'] || '/'})
+            res.end()
+        })
     }
 
     /**
-     * start the server
+     * Start the server
      * @param {number|string=}port
      */
     function listen(port) {
         server.listen(port || config.port, () => {
             app.drivers.logger.success('Express', `App listening on port ${config.port}`)
+            if (config.open === false) return
             opn(`http://localhost:${config.port}`)
         })
     }
 
     /**
-     * Initialize middlewares
+     * Initialize middlewares in ./middleware using declaration in default.yml or *env*.yml
      */
     function middlewares() {
-
         app.middlewares = {}
         const basePath = path.join(app.root, '/middlewares')
         let middlewares = app.config.get('express').middlewares
@@ -93,54 +110,34 @@ module.exports = (app) => {
 
     /**
      * trigger methods before and after the routing (use methods almost)
-     * @param {Boolean} state - routing done (true) or not 
      */
-    function use(state = false) {
-        // state is true if routes has been declared (use before)
-        if (!state) {
-            server.use(config.assets ? config.assets : '/assets', express.static(`${app.root}/views/assets`))
+    function configure() {
+        server.use(config.assets ? config.assets : '/assets', express.static(`${app.root}/views/assets`))
 
-            server.use(bodyparser.json({limit: config.body_parser_limit}))
-            server.use(bodyparser.urlencoded({
-                parameterLimit: 10000,
-                limit: config.body_parser_limit,
-                extended: true
+        server.use(bodyparser.json({limit: config.body_parser_limit}))
+        server.use(bodyparser.urlencoded({
+            parameterLimit: 10000,
+            limit: config.body_parser_limit,
+            extended: true
+        }))
+
+        if (config.session) {
+            server.use(session({
+                secret: config.session_secret,
+                store: new redisStore({
+                    host: config.session_redis_host || 'localhost',
+                    port: config.session_redis_port || 6379,
+                    client: redis.createClient()
+                }),
+                resave: false,
+                saveUninitialized: true
             }))
-
-            if (config.session) {
-                server.use(session({
-                    secret: config.session_secret,
-                    store: new redisStore({
-                        host: config.session_redis_host || 'localhost',
-                        port: config.session_redis_port || 6379,
-                        client: redis.createClient()
-                    }),
-                    resave: false,
-                    saveUninitialized: true
-                }))
-            }
-
-            server.set('views', `${app.root}/views`)
-            server.set('view engine', 'twig')
-
-            middlewares()
-
         }
 
-        if (state) {
-            // handling 404 errors from config.express['404_redirect'] property
-            server.use(function (req, res, next) {
-                res.status(404)
-                res.writeHead(302, {'Location': config['404_redirect'] || '/'})
-                res.end()
-            })
-        }
+        server.set('views', `${app.root}/views`)
+        server.set('view engine', 'twig')
+
     }
-
-    if (!app.config.has('express'))
-        return app.drivers.logger.error('Express', 'Cannot init the driver, missing config')
-
-    const config = app.config.get('express')
 
     // routing from express.routes in config/{env}.yml and listen
     if (!config.async_init) {

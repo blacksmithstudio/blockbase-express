@@ -1,0 +1,11 @@
+
+express:
+    async_init: true
+    open : false
+    middlewares:
+        - dest: foo
+    routes:
+        - type: controller
+          src: /tests/foo
+          dest: foo::bar
+          method: get

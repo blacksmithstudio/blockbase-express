@@ -16,3 +16,4 @@ npm-debug.log
 # Other (blockbase linked)
 tmp/
 uploads/
+package-lock.json
