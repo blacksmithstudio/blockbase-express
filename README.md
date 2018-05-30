@@ -14,6 +14,7 @@ Then add to your `config/{env}.yml` the following (example) instructions dependi
 express :
     port: 1340
     open: true
+    silent: false
     body_parser_limit : 50mb
     404_redirect : /404
     routes :
@@ -26,6 +27,19 @@ express :
           dest: home
           method: get
 ```
+
+### Options
+
+- port : the port you want the server to be listening on. (default : 4000)
+- open : open the app in your browser when the app starts (default : true)
+- silent : disable error message when __No__ custom error handlers are used (default : false)
+- body_parser_limit : content size limit to be parsed by Bodyparser
+- 404_redirect : URL to redirect a user to when requesting a URL that doesn't exist
+- assets : your project assets folder, at your project's root directory (ex : 'src/views/public') (default : 'views/assets')
+- async_init : init drivers and models first, but not the controllers to allow you to do it manually (ex : if you want to use __express.use(morgan())__ ) (default : false)
+- session_secret : your __express-session__ secret key
+- session_redis_host : your __express-session__ host to your redis server (default localhost)
+- session_redis_port : your __express-session__ port to your redis (default 6379)
 
 ### Usage
 The entire usage of the driver is done by the `config/{env}.yml`, we've tried to make it as simple as it need.

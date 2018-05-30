@@ -1,11 +1,20 @@
+log: true
+name: driver-express-test
 
 express:
     async_init: true
     open : false
+    silent: true
+    port: 4000
     middlewares:
         - dest: foo
+        - dest: error
     routes:
         - type: controller
           src: /tests/foo
           dest: foo::bar
+          method: get
+        - type: controller
+          src: /tests/throw500
+          dest: foo::throw500
           method: get

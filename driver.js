@@ -25,6 +25,25 @@ module.exports = (app) => {
 
     const server = express()
     const config = app.config.get('express')
+    let errorHandlers = []
+
+    /**
+     * Handle async methods/middleware
+     * {function} @param fn
+     * @returns {*}
+     */
+    let wrapper = fn => {
+        if (fn.length == 4) {
+            return (err, req, res, next) => {
+                return Promise.resolve(fn(err, req, res, next))
+                    .catch(err => next(err))
+            }
+        }
+        return (req, res, next) => {
+            return Promise.resolve(fn(req, res, next))
+                .catch(err => next(err))
+        }
+    }
 
     /**
      * Initialize the routes
@@ -55,22 +74,44 @@ module.exports = (app) => {
                 }()
 
                 if (route.method === 'post' || route.method === 'put')
-                    server[route.method](route.src, upload.any(), controller[method])
+                    server[route.method](route.src, upload.any(), wrapper(controller[method]))
                 else
-                    server[route.method](route.src, controller[method])
+                    server[route.method](route.src, wrapper(controller[method]))
             }
         }
 
-        afterRouting()
+        errors()
     }
 
-    function afterRouting() {
-        //TODO : handle async error
+    /**
+     * Register error handlers
+     */
+    function errors() {
         // handling 404 errors from config.express['404_redirect'] property
-        server.use(function (req, res, next) {
-            res.status(404)
-            res.writeHead(302, {'Location': config['404_redirect'] || '/'})
-            res.end()
+        if (config['404_redirect']) {
+            server.use(function (req, res, next) {
+                res.status(302)
+                res.writeHead(302, {'Location': config['404_redirect']})
+                res.end()
+            })
+        }
+        else {
+            server.use(function (req, res, next) {
+                res.status(404).send({message: 'not found'})
+            })
+        }
+
+        if (errorHandlers.length) {
+            for (let eh of errorHandlers) {
+                server.use(wrapper(eh))
+            }
+        }
+
+        //Default error handler
+        server.use((err, req, res, next) => {
+            if (!config.silent && !errorHandlers)
+                app.drivers.logger.error('Unhandled error', err)
+            res.status(500).json({message: err.message, stack: err.stack})
         })
     }
 
@@ -78,8 +119,8 @@ module.exports = (app) => {
      * Start the server
      * @param {number|string=}port
      */
-    function listen(port) {
-        server.listen(port || config.port, () => {
+    function listen(port = 4000) {
+        server.listen(process.env.PORT || config.port || port, () => {
             app.drivers.logger.success('Express', `App listening on port ${config.port}`)
             if (config.open === false) return
             opn(`http://localhost:${config.port}`)
@@ -98,10 +139,15 @@ module.exports = (app) => {
                 let middleware = require(path.join(basePath, m.dest))(app)
                 app.middlewares[m.dest.toLowerCase()] = middleware
 
+                if (middleware.length == 4) { //error handler
+                    errorHandlers.push(middleware)
+                    continue
+                }
+
                 if (m.src)
-                    server.use(m.src, middleware)
+                    server.use(m.src, wrapper(middleware))
                 else
-                    server.use(middleware)
+                    server.use(wrapper(middleware))
             }
             if (middlewares.length)
                 app.drivers.logger.success('Middleware', 'initialized')

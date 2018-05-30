@@ -4,9 +4,7 @@
  * @returns {*}
  */
 module.exports = (app) => {
-
-    return function (req, res, next) {
-
+    return async function (req, res, next) {
         next()
     }
 
