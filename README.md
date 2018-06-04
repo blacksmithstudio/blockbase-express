@@ -201,8 +201,8 @@ If you find any issue, feel free to post it in the [repo on Github](https://gith
 
 License
 ----
-
-(Copyright) 2017 - Alexandre Pereira for Blacksmith S.A.S.
+(Licence [MIT](https://github.com/blacksmithstudio/blockbase/blob/master/LICENCE))
+Coded by [Blacksmith](https://www.blacksmith.studio)
 
 
 **Free Software, Hell Yeah!**
