@@ -74,15 +74,7 @@ describe('Express driver tests', async function () {
             }
         })
 
-        /*it('should handle 500 error', async function () {
-            try {
-                //let result = await client.request('tests/throw500')
+        it('done', () => process.exit())
 
-
-            }
-            catch (e) {
-                should.not.exist(e)
-            }
-        })*/
     })
 })
