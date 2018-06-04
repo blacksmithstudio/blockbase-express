@@ -1,10 +1,10 @@
 {
-  "name": "@blacksmithstudio/blockbase-express",
-  "version": "0.2.0",
+  "name": "blockbase-express",
+  "version": "0.2.1",
   "description": "blockbase driver for Express",
   "main": "driver.js",
   "scripts": {
-    "test": "mocha tests/test"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",

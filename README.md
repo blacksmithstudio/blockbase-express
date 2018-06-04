@@ -2,11 +2,11 @@
 Compatible with Blockbase Framework
 
 ### Version
-0.2.0 alpha
+0.2.1 alpha
 
 ### How to install ?
 ```shell
-$ npm i --save @blacksmithstudio/blockbase-express
+$ npm i --save blockbase-express
 ```
 
 Then add to your `config/{env}.yml` the following (example) instructions depending of your system
