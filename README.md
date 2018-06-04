@@ -201,7 +201,7 @@ If you find any issue, feel free to post it in the [repo on Github](https://gith
 
 License
 ----
-(Licence [MIT](https://github.com/blacksmithstudio/blockbase/blob/master/LICENCE))
+(Licence [MIT](https://github.com/blacksmithstudio/blockbase-express/blob/master/LICENCE))
 Coded by [Blacksmith](https://www.blacksmith.studio)
 
 
