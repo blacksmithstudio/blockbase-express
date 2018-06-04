@@ -5,7 +5,7 @@
 const should = require('should')
 process.env['NODE_CONFIG_DIR'] = __dirname + '/config'
 
-const blockbase = require('@blacksmithstudio/blockbase')
+const blockbase = require('blockbase')
 
 let driver
 let application
