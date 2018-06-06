@@ -73,8 +73,5 @@ describe('Express driver tests', async function () {
 
             }
         })
-
-        it('done', () => process.exit())
-
     })
 })

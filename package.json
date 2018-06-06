@@ -4,7 +4,7 @@
   "description": "blockbase driver for Express",
   "main": "driver.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "repository": {
     "type": "git",
