@@ -2,7 +2,7 @@
 Compatible with Blockbase Framework
 
 ### Version
-0.2.2 alpha
+0.2.3 alpha
 
 ### How to install ?
 ```shell
@@ -54,16 +54,6 @@ express :
 ```
 
 The example above creates a server on `http://localhost:1340`
-
-#### Open app in browser
-The default config opens your default browser right after the app starts.
-
-To prevent this, simply put "false" in the "open" parameter
-```yml
-express: 
-    open: false
-```
-
 
 
 #### Routing

@@ -7,7 +7,6 @@ const Twig = require('twig')
 const multer = require('multer')
 const path = require('path')
 const upload = multer({limits: {fileSize: 50 * 1024 * 1024}})
-const opn = require('opn')
 //@TODO make multer config possible in {env}.yml
 
 /**
@@ -122,8 +121,6 @@ module.exports = (app) => {
     function listen(port = 4000) {
         server.listen(process.env.PORT || config.port || port, () => {
             app.drivers.logger.success('Express', `App listening on port ${config.port}`)
-            if (config.open === false) return
-            opn(`http://localhost:${config.port}`)
         })
     }
 
