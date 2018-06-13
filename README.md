@@ -2,7 +2,7 @@
 Compatible with Blockbase Framework
 
 ### Version
-0.2.3 alpha
+0.2.5 (alpha)
 
 ### How to install ?
 ```shell
@@ -170,7 +170,7 @@ blockbase({ root : __dirname }, (app) => {
 ```
 
 #### Sessions
-blockbase-express driver includes a native support of the [https://www.npmjs.com/package/express-session](express-session) driver.
+blockbase-express driver includes a native support of the [express-session](https://www.npmjs.com/package/express-session) driver (with Redis).
 
 To activate it, you just have to fill the following infos :
 ```yml
