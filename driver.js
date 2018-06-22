@@ -108,8 +108,8 @@ module.exports = (app) => {
 
         //Default error handler
         server.use((err, req, res, next) => {
-            if (!config.silent && !errorHandlers)
-                app.drivers.logger.error('Unhandled error', err)
+            if (!config.silent && !errorHandlers.length)
+                app.drivers.logger.error('Unhandled server error', err)
             res.status(500).json({message: err.message, stack: err.stack})
         })
     }
