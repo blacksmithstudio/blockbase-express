@@ -1,6 +1,6 @@
 {
   "name": "blockbase-express",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "blockbase driver for Express",
   "main": "driver.js",
   "scripts": {
