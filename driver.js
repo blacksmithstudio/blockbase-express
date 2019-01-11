@@ -8,6 +8,9 @@ const multer = require('multer')
 const path = require('path')
 const upload = multer({ limits: { fileSize: 50 * 1024 * 1024 } })
 const assert = require('assert')
+const fs = require('fs')
+
+
 //@TODO make multer config possible in {env}.yml
 
 /**
@@ -28,8 +31,10 @@ module.exports = (app) => {
     if (!config.routes) {
         config.routes = []
         const routesPath = path.join(app.root, 'config/routes.yml')
-        const routeConfig = config.util.parseFile(routesPath)
-        config.util.extendDeep(config.routes, routeConfig);
+        if (fs.existsSync(routesPath)) {
+            let routeConfig = config.util.parseFile(routesPath)
+            config.util.extendDeep(config.routes, routeConfig)
+        }
     }
 
     let errorHandlers = []
