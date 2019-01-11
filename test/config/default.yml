@@ -9,12 +9,3 @@ express:
     middlewares:
         - dest: foo
         - dest: error
-    routes:
-        - type: controller
-          src: /tests/foo
-          dest: foo::bar
-          method: get
-        - type: controller
-          src: /tests/throw500
-          dest: foo::throw500
-          method: get
