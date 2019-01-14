@@ -31,15 +31,14 @@ express :
 (optional) You can also register routes in a seperated file `config/routes.yml` :
 
 ```yml
-routes :
-    - type: controller
-      src: /foo/bar
-      dest: /controllers/foo::bar
-      method: get
-    - type: view
-      src: /
-      dest: home
-      method: get
+- type: controller
+  src: /foo/bar
+  dest: /controllers/foo::bar
+  method: get
+- type: view
+  src: /
+  dest: home
+  method: get
 ```
 
 ### Options
