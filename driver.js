@@ -75,8 +75,7 @@ module.exports = (app) => {
                 })
 
             if (route.type === 'controller') {
-                let path   = route.dest.split('::')[0],
-                    method = route.dest.split('::')[1]
+                let [path, method] = route.dest.split('::')
 
                 let controller = function () {
                     if (!app.controllers)
@@ -129,7 +128,11 @@ module.exports = (app) => {
         server.use((err, req, res, next) => {
             if (!config.silent && !errorHandlers.length)
                 app.drivers.logger.error('Unhandled server error', err)
-            res.status(500).json({ message: err.message, stack: err.stack })
+            res.status(500)
+               .json({
+                   message: err.message,
+                   stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
+               })
         })
     }
 
