@@ -69,8 +69,6 @@ describe('Express driver tests', async function () {
                 should.exist(e.error)
                 should.exist(e.error.message)
                 should.equal(e.error.message, 'custom_handled_error')
-                should.exist(e.error.stack)
-
             }
         })
     })

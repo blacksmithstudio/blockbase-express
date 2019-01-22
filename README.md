@@ -2,7 +2,7 @@
 Compatible with Blockbase Framework
 
 ### Version
-0.2.6
+0.2.7
 
 ### How to install ?
 ```shell
@@ -26,6 +26,19 @@ express :
           src: /
           dest: home
           method: get
+```
+
+(optional) You can also register routes in a seperated file `config/routes.yml` :
+
+```yml
+- type: controller
+  src: /foo/bar
+  dest: /controllers/foo::bar
+  method: get
+- type: view
+  src: /
+  dest: home
+  method: get
 ```
 
 ### Options

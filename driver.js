@@ -6,7 +6,11 @@ const redisStore = require('connect-redis')(session)
 const Twig = require('twig')
 const multer = require('multer')
 const path = require('path')
-const upload = multer({limits: {fileSize: 50 * 1024 * 1024}})
+const upload = multer({ limits: { fileSize: 50 * 1024 * 1024 } })
+const assert = require('assert')
+const fs = require('fs')
+
+
 //@TODO make multer config possible in {env}.yml
 
 /**
@@ -24,6 +28,15 @@ module.exports = (app) => {
 
     const server = express()
     const config = app.config.get('express')
+    if (!config.routes) {
+        config.routes = []
+        const routesPath = path.join(app.root, 'config/routes.yml')
+        if (fs.existsSync(routesPath)) {
+            let routeConfig = config.util.parseFile(routesPath)
+            config.util.extendDeep(config.routes, routeConfig)
+        }
+    }
+
     let errorHandlers = []
 
     /**
@@ -32,15 +45,18 @@ module.exports = (app) => {
      * @returns {*}
      */
     let wrapper = fn => {
+        assert.equal(typeof fn, 'function')
+        if (!fn) return
+
         if (fn.length == 4) {
             return (err, req, res, next) => {
                 return Promise.resolve(fn(err, req, res, next))
-                    .catch(err => next(err))
+                              .catch(err => next(err))
             }
         }
         return (req, res, next) => {
             return Promise.resolve(fn(req, res, next))
-                .catch(err => next(err))
+                          .catch(err => next(err))
         }
     }
 
@@ -52,15 +68,14 @@ module.exports = (app) => {
 
         middlewares()
 
-        for (let route of app.config.get('express').routes) {
+        for (let route of config.routes) {
             if (route.type === 'view')
                 server[route.method](route.src, (req, res) => {
                     res.render(`${app.root}/views/${route.dest}.twig`, {})
                 })
 
             if (route.type === 'controller') {
-                let path   = route.dest.split('::')[0],
-                    method = route.dest.split('::')[1]
+                let [path, method] = route.dest.split('::')
 
                 let controller = function () {
                     if (!app.controllers)
@@ -72,10 +87,14 @@ module.exports = (app) => {
                         return app.controllers[path]
                 }()
 
+                let func = wrapper(controller[method])
+                if (!func)
+                    app.drivers.logger.error('blockbase-express - wrapper', `Undefined function ${controller}${method}`)
+
                 if (route.method === 'post' || route.method === 'put')
-                    server[route.method](route.src, upload.any(), wrapper(controller[method]))
+                    server[route.method](route.src, upload.any(), func)
                 else
-                    server[route.method](route.src, wrapper(controller[method]))
+                    server[route.method](route.src, func)
             }
         }
 
@@ -90,13 +109,12 @@ module.exports = (app) => {
         if (config['404_redirect']) {
             server.use(function (req, res, next) {
                 res.status(302)
-                res.writeHead(302, {'Location': config['404_redirect']})
+                res.writeHead(302, { 'Location': config['404_redirect'] })
                 res.end()
             })
-        }
-        else {
+        } else {
             server.use(function (req, res, next) {
-                res.status(404).send({message: 'not found'})
+                res.status(404).send({ message: 'not found' })
             })
         }
 
@@ -110,7 +128,11 @@ module.exports = (app) => {
         server.use((err, req, res, next) => {
             if (!config.silent && !errorHandlers.length)
                 app.drivers.logger.error('Unhandled server error', err)
-            res.status(500).json({message: err.message, stack: err.stack})
+            res.status(500)
+               .json({
+                   message: err.message,
+                   stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
+               })
         })
     }
 
@@ -157,7 +179,7 @@ module.exports = (app) => {
     function configure() {
         server.use(config.assets ? config.assets : '/assets', express.static(`${app.root}/views/assets`))
 
-        server.use(bodyparser.json({limit: config.body_parser_limit}))
+        server.use(bodyparser.json({ limit: config.body_parser_limit }))
         server.use(bodyparser.urlencoded({
             parameterLimit: 10000,
             limit: config.body_parser_limit,
@@ -188,5 +210,5 @@ module.exports = (app) => {
         listen()
     }
 
-    return {express, server, route, listen}
+    return { express, server, route, listen }
 }
