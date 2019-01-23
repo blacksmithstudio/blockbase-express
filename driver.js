@@ -28,9 +28,9 @@ module.exports = (app) => {
 
     const server = express()
     const config = app.config.get('express')
-    if (!config.routes) {
+    if (!config.routes || !config.routes.length) {
         config.routes = []
-        const routesPath = path.join(app.root, 'config/routes.yml')
+        const routesPath = path.join(app.root, '../config/routes.yml')
         if (fs.existsSync(routesPath)) {
             let routeConfig = config.util.parseFile(routesPath)
             config.util.extendDeep(config.routes, routeConfig)

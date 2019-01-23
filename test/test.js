@@ -10,7 +10,9 @@ const blockbase = require('blockbase')
 let driver
 let application
 let client
-blockbase({root: __dirname}, async app => {
+console.log('__dirname', __dirname)
+
+blockbase({root: __dirname + '/src'}, async app => {
     driver = app.drivers.express = require('../driver')(app)
     driver.route()
     driver.listen()
