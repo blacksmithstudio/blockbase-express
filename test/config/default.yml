@@ -6,6 +6,8 @@ express:
     open : false
     silent: true
     port: 4000
+    session: true
+    session_secret: 76TGHJI87YTGHJI87YHO98uèyjioç
     middlewares:
         - dest: foo
         - dest: error

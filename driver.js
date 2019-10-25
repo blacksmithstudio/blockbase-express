@@ -6,10 +6,9 @@ const redisStore = require('connect-redis')(session)
 const Twig = require('twig')
 const multer = require('multer')
 const path = require('path')
-const upload = multer({ limits: { fileSize: 50 * 1024 * 1024 } })
+const upload = multer({limits: {fileSize: 50 * 1024 * 1024}})
 const assert = require('assert')
 const fs = require('fs')
-
 
 //@TODO make multer config possible in {env}.yml
 
@@ -51,12 +50,12 @@ module.exports = (app) => {
         if (fn.length == 4) {
             return (err, req, res, next) => {
                 return Promise.resolve(fn(err, req, res, next))
-                              .catch(err => next(err))
+                    .catch(err => next(err))
             }
         }
         return (req, res, next) => {
             return Promise.resolve(fn(req, res, next))
-                          .catch(err => next(err))
+                .catch(err => next(err))
         }
     }
 
@@ -109,12 +108,12 @@ module.exports = (app) => {
         if (config['404_redirect']) {
             server.use(function (req, res, next) {
                 res.status(302)
-                res.writeHead(302, { 'Location': config['404_redirect'] })
+                res.writeHead(302, {'Location': config['404_redirect']})
                 res.end()
             })
         } else {
             server.use(function (req, res, next) {
-                res.status(404).send({ message: 'not found' })
+                res.status(404).send({message: 'not found'})
             })
         }
 
@@ -129,10 +128,10 @@ module.exports = (app) => {
             if (!config.silent && !errorHandlers.length)
                 app.drivers.logger.error('Unhandled server error', err)
             res.status(500)
-               .json({
-                   message: err.message,
-                   stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
-               })
+                .json({
+                    message: err.message,
+                    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
+                })
         })
     }
 
@@ -179,7 +178,7 @@ module.exports = (app) => {
     function configure() {
         server.use(config.assets ? config.assets : '/assets', express.static(`${app.root}/views/assets`))
 
-        server.use(bodyparser.json({ limit: config.body_parser_limit }))
+        server.use(bodyparser.json({limit: config.body_parser_limit}))
         server.use(bodyparser.urlencoded({
             parameterLimit: 10000,
             limit: config.body_parser_limit,
@@ -187,14 +186,19 @@ module.exports = (app) => {
         }))
 
         if (config.session) {
+            const client = redis.createClient({
+                host: config.session_redis_host || 'localhost',
+                port: config.session_redis_port || 6379
+            })
+            client.on("error", function (err) {
+                app.drivers.logger.error('Express - Redis connexion error', err)
+            });
+            client.on("ready", function (err) {
+                app.drivers.logger.success('Express', `Redis connexion ready`)
+            });
             server.use(session({
                 secret: config.session_secret,
-                store: new redisStore({
-                    client: redis.createClient({
-                        host: config.session_redis_host || 'localhost',
-                        port: config.session_redis_port || 6379
-                    })
-                }),
+                store: new redisStore({client}),
                 resave: false,
                 saveUninitialized: true
             }))
@@ -211,5 +215,5 @@ module.exports = (app) => {
         listen()
     }
 
-    return { express, server, route, listen }
+    return {express, server, route, listen}
 }
