@@ -6,11 +6,22 @@
   "scripts": {
     "test": "mocha --exit"
   },
+  "keywords": [
+    "express",
+    "express",
+    "framework",
+    "minimalist",
+    "orm",
+    "blockbase",
+    "es6",
+    "async",
+    "await"
+  ],
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com:blacksmithstudio/blockbase-express.git"
   },
-  "author": "Alexandre Pereira <alex@blacksmith.studio>",
+  "author": "Blacksmith Studio <code@blacksmith.studio>",
   "license": "MIT",
   "dependencies": {
     "blockbase": "^1.0.6",

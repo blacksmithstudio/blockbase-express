@@ -190,9 +190,10 @@ module.exports = (app) => {
             server.use(session({
                 secret: config.session_secret,
                 store: new redisStore({
-                    host: config.session_redis_host || 'localhost',
-                    port: config.session_redis_port || 6379,
-                    client: redis.createClient()
+                    client: redis.createClient({
+                        host: config.session_redis_host || 'localhost',
+                        port: config.session_redis_port || 6379
+                    })
                 }),
                 resave: false,
                 saveUninitialized: true
